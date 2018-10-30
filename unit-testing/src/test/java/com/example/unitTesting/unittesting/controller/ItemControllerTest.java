@@ -5,6 +5,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ public class ItemControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@MockBean
 	private ItemBusinessService businessService;
 
@@ -36,20 +38,34 @@ public class ItemControllerTest {
 		RequestBuilder request = MockMvcRequestBuilders.get("/dummy-item")
 				.accept(org.springframework.http.MediaType.APPLICATION_JSON);
 //		MvcResult result = 
-		mockMvc.perform(request).andExpect(status().isOk()).andExpect(content().json("{\"id\": 1,\"name\":\"Ball\",\"price\":10,\"quantity\":100}")).andReturn();
+		mockMvc.perform(request).andExpect(status().isOk())
+				.andExpect(content().json("{\"id\": 1,\"name\":\"Ball\",\"price\":10,\"quantity\":100}")).andReturn();
 
 		// verify output
 		// assertEquals("Hello", result.getResponse().getContentAsString());
 	}
-	
+
 	@Test
 	public void itemFromBusiness_basic() throws Exception {
 		// call GET
-		when(businessService.retrieveHardcodedValues()).thenReturn(new Item(1, "Ball", 10, 100) );
+		when(businessService.retrieveHardcodedValues()).thenReturn(new Item(1, "Ball", 10, 100));
 		RequestBuilder request = MockMvcRequestBuilders.get("/item-from-business")
 				.accept(org.springframework.http.MediaType.APPLICATION_JSON);
 //		MvcResult result = 
-		mockMvc.perform(request).andExpect(status().isOk()).andExpect(content().json("{\"id\": 1,\"name\":\"Ball\",\"price\":10,\"quantity\":100}")).andReturn();
+		mockMvc.perform(request).andExpect(status().isOk())
+				.andExpect(content().json("{\"id\": 1,\"name\":\"Ball\",\"price\":10,\"quantity\":100}")).andReturn();
+
+	}
+
+	@Test
+	public void retrieveAllItems_basic() throws Exception {
+		// call GET
+		when(businessService.retrieveAllItems()).thenReturn(Arrays.asList(new Item(1, "Ball", 10, 100), new Item(2, "Ball", 20, 100)));
+		RequestBuilder request = MockMvcRequestBuilders.get("/all-items")
+				.accept(org.springframework.http.MediaType.APPLICATION_JSON);
+//		MvcResult result = 
+		mockMvc.perform(request).andExpect(status().isOk())
+				.andExpect(content().json("[{\"id\": 1,\"name\":\"Ball\",\"price\":10,\"quantity\":100}, {\"id\": 2,\"name\":\"Ball\",\"price\":20}]")).andReturn();
 
 	}
 }
